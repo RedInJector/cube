@@ -1,3 +1,4 @@
+#include "objparser.h"
 #define SDL_MAIN_HANDLED
 #define SDL_PROJECT
 
@@ -13,17 +14,13 @@
 int SCREEN_W = SCREEN_WIDTH;
 int SCREEN_H = SCREEN_HEIGHT;
 
-
 SDL_Window *window;
 SDL_Renderer *renderer;
 
-
-void plotPixel(int x, int y) {
-    SDL_RenderDrawPoint(renderer, x, y);
-}
+void plotPixel(int x, int y) { SDL_RenderDrawPoint(renderer, x, y); }
 void plotLinePoints(vec3f point0, vec3f point1) {
-    std::function<void(int, int)> pixelPlotter = plotPixel;
-    plotLine(pixelPlotter, point0.x, point0.y, point1.x, point1.y);
+  std::function<void(int, int)> pixelPlotter = plotPixel;
+  plotLine(pixelPlotter, point0.x, point0.y, point1.x, point1.y);
 }
 
 void plotTriangle(triangle t) {
@@ -56,8 +53,12 @@ void RenderScene(std::shared_ptr<scene_v> sc, SDL_Renderer *r) {
     applyTransform(obj, transMatrix);
     for (int j = 0; j < n; j++) {
       triangle triProjected, triTransformed;
+      triangle t;
+      t.p[0] = obj->vertices.at(obj->triangles.at(j).vertexid[0]);
+      t.p[1] = obj->vertices.at(obj->triangles.at(j).vertexid[1]);
+      t.p[2] = obj->vertices.at(obj->triangles.at(j).vertexid[2]);
 
-      MultiplyMatrixTris(&obj->triangles.at(j), &triTransformed, &transMatrix);
+      MultiplyMatrixTris(&t, &triTransformed, &transMatrix);
 
       for (int k = 0; k < 3; k++) {
         triTransformed.p[k].x += obj->transform.position.x;
@@ -97,10 +98,18 @@ void start() {
 
   scn = makeSceneNew();
 
-  scn->objects.push_back(makeCubeNew());
-  //scn->objects.push_back(makeCubeNew());
-  //scn->objects.push_back(makeCubeNew());
+  // scn->objects.push_back(makeCubeNew());
+  // scn->objects.push_back(makeCubeNew());
+  // scn->objects.push_back(makeCubeNew());
 
+  auto obj = loadObj("teapot.obj");
+  if(obj == nullptr)
+      exit(1);
+
+  obj->isVisible = true;
+  std::shared_ptr<object3d_v> objs = std::move(obj);
+
+  scn->objects.push_back(objs);
 
   makeDefaultCamera(&camera, SCREEN_H, SCREEN_W);
 
@@ -113,27 +122,27 @@ void loop() {
   if (isRotated)
     fTheta += 0.001 * deltaTime;
 
-  auto cube = scn->objects.at(0);
+  auto object = scn->objects.at(0);
 
-  cube->transform.rotation.x = 0;
-  cube->transform.rotation.y = fTheta;
-  cube->transform.rotation.z = 0;
+  object->transform.rotation.x = 0;
+  object->transform.rotation.y = fTheta;
+  object->transform.rotation.z = 0;
 
-  cube->transform.position.x = 0;
-  cube->transform.position.y = 0;
-  cube->transform.position.z = 3;
+  object->transform.position.x = 0;
+  object->transform.position.y = 0;
+  object->transform.position.z = 10;
 
-  //cube2->origin.position.x = 1;
-  //cube2->transform.position.y = 1;
-  //cube2->transform.position.z = 3;
-  //cube2->transform.rotation.y = -fTheta * 0.8f;
-  //cube2->transform.rotation.z = 0;
+  // cube2->origin.position.x = 1;
+  // cube2->transform.position.y = 1;
+  // cube2->transform.position.z = 3;
+  // cube2->transform.rotation.y = -fTheta * 0.8f;
+  // cube2->transform.rotation.z = 0;
 
   //// line2->origin.position.x = 1;
-  //cube3->transform.position.z = 3;
-  //cube3->transform.position.y = -1;
-  //cube3->transform.rotation.y = -fTheta * 1.1f;
-  //cube3->transform.rotation.z = 0;
+  // cube3->transform.position.z = 3;
+  // cube3->transform.position.y = -1;
+  // cube3->transform.rotation.y = -fTheta * 1.1f;
+  // cube3->transform.rotation.z = 0;
 
   // cube3->isVisible = false;
 }
@@ -165,7 +174,7 @@ int main(int argc, char **argv) {
           continue;
         }
         if (e.button.button == SDL_BUTTON_RIGHT) {
-          //cube3->isVisible = !cube3->isVisible;
+          // cube3->isVisible = !cube3->isVisible;
           continue;
         }
       }

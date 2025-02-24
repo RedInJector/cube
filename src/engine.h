@@ -38,12 +38,18 @@ struct scene_s {
 
 typedef struct scene_s scene;
 
+typedef struct Face_s {
+    std::vector<int> vertexIndices;
+} Face;
+
 
 typedef struct object3d_vs {
 	transformation transform;
 	vec3f origin;
 	bool isVisible;
-	std::vector<triangle> triangles;
+	std::vector<triangle_v> triangles;
+    std::vector<vec3f> vertices;
+    std::vector<Face> faces;
 } object3d_v;
 
 typedef struct scene_vs {

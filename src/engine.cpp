@@ -63,7 +63,7 @@ std::shared_ptr<object3d_v> makeCubeNew() {
 
     for (int i = 0; i < 12; i++) {
         for (int j = 0; j < 3; j++) {
-            obj->triangles.push_back(t[i]);
+//            obj->triangles.push_back(t[i]);
         }
     }
 

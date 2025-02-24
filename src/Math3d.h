@@ -27,6 +27,10 @@ struct triangle_s {
   vec3f p[3];
 };
 
+typedef struct triangle_vs {
+    int vertexid[3];
+} triangle_v;
+
 
 /**
  * @struct triangle
