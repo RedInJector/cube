@@ -43,18 +43,18 @@ struct mat4x4f_s {
 
 
 /**
- * @brief Default matrix initialized to zero.
- */
-extern struct mat4x4f_s mat4x4f_default;
-
-
-/**
  * @struct mat4x4f
  * @brief A structure representing a 4x4 matrix with float components.
  *
  * This structure is used to represent a matrix with float values.
  */
 typedef struct mat4x4f_s mat4x4f;
+
+/**
+ * @brief Default matrix initialized to zero.
+ */
+extern struct mat4x4f_s mat4x4f_default;
+
 
 /**
  * @brief returns true if all elements of a matrix equals to 0.
@@ -95,7 +95,7 @@ void MultiplyMatrixTris(triangle* i, triangle* o, mat4x4f* m);
  * @param *o - pointer to output matrix
  */
 void MultiplyMatrixes(mat4x4f* m1, mat4x4f* m2, mat4x4f* o);
-
+void MultiplyMatrixes(mat4x4f &m1, mat4x4f &m2, mat4x4f &o);
 
 /**
  * @brief Converts a 3D vector (vec3f) into a 4x4 transformation matrix.
@@ -124,6 +124,8 @@ void MultiplyMatrixes(mat4x4f* m1, mat4x4f* m2, mat4x4f* o);
  * @param *o - Pointer to the output 4x4 transformation matrix (mat4x4f).
  */
 void vecToMat(vec3f* transform, mat4x4f* o);
+
+void vecToMat(vec3f& transform, mat4x4f& o);
 
 
 /**
@@ -154,6 +156,16 @@ void rotateMatrixY(float fTheta, mat4x4f* o);
  * @param *o - Pointer to the output 4x4 rotation matrix.
  */
 void rotateMatrixZ(float fTheta, mat4x4f* o);
+
+
+/**
+ * @brief Creates a 4x4 rotation matrix around for given vector.
+ *
+ * Constructs a complete rotation matrix that rotates by x, y, z radians around each axis.
+ * @param rotation - Rotation vector.
+ * @param *o - Pointer to the output 4x4 rotation matrix.
+ */
+void rotateMatrix(vec3f& rotation, mat4x4f& out);
 
 
 /**

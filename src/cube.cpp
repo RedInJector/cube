@@ -41,23 +41,23 @@ float fElapsedTime = 0;
 double deltaTime = 0;
 
 mat4x4f matProj;
-void RenderScene(scene *sc, SDL_Renderer *r) {
+void RenderScene(std::shared_ptr<scene_v> sc, SDL_Renderer *r) {
   SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
   SDL_RenderClear(r);
   SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
 
-  for (int i = 0; i < sc->size; i++) {
-    object3d *obj = sc->objects[i];
+  for (int i = 0; i < sc->objects.size(); i++) {
+    std::shared_ptr<object3d_v> obj = sc->objects.at(i);
     if (!obj->isVisible)
       continue;
-    int n = obj->size;
+    int n = obj->triangles.size();
 
     mat4x4f transMatrix;
-    applyTransform(obj, &transMatrix);
+    applyTransform(obj, transMatrix);
     for (int j = 0; j < n; j++) {
       triangle triProjected, triTransformed;
 
-      MultiplyMatrixTris(&obj->tris[j], &triTransformed, &transMatrix);
+      MultiplyMatrixTris(&obj->triangles.at(j), &triTransformed, &transMatrix);
 
       for (int k = 0; k < 3; k++) {
         triTransformed.p[k].x += obj->transform.position.x;
@@ -90,27 +90,21 @@ void RenderScene(scene *sc, SDL_Renderer *r) {
 }
 
 Camera camera;
-object3d *cube;
-object3d *cube2;
-object3d *cube3;
 
-scene *scn;
+std::shared_ptr<scene_v> scn;
 void start() {
   matProj = mat4x4f_default;
 
-  cube = makeCube();
-  cube2 = makeCube();
-  cube3 = makeCube();
+  scn = makeSceneNew();
 
-  scn = makeScene(1);
-  scn->objects[0] = cube;
-  // scn->objects[1] = cube2;
-  // scn->objects[2] = cube3;
+  scn->objects.push_back(makeCubeNew());
+  //scn->objects.push_back(makeCubeNew());
+  //scn->objects.push_back(makeCubeNew());
+
 
   makeDefaultCamera(&camera, SCREEN_H, SCREEN_W);
-  camera.fFov = 40.0f;
-  camera.fFovRad = 1.0f / tanf(camera.fFov * 0.5f / 180.0f * 3.14159f);
-  makeProjectionMatrix(&camera, &matProj);
+
+  makeProjectionMatrix(camera, matProj);
 }
 
 float fTheta = 0;
@@ -118,6 +112,8 @@ int isRotated = 1;
 void loop() {
   if (isRotated)
     fTheta += 0.001 * deltaTime;
+
+  auto cube = scn->objects.at(0);
 
   cube->transform.rotation.x = 0;
   cube->transform.rotation.y = fTheta;
@@ -127,17 +123,17 @@ void loop() {
   cube->transform.position.y = 0;
   cube->transform.position.z = 3;
 
-  cube2->origin.position.x = 1;
-  cube2->transform.position.y = 1;
-  cube2->transform.position.z = 3;
-  cube2->transform.rotation.y = -fTheta * 0.8f;
-  cube2->transform.rotation.z = 0;
+  //cube2->origin.position.x = 1;
+  //cube2->transform.position.y = 1;
+  //cube2->transform.position.z = 3;
+  //cube2->transform.rotation.y = -fTheta * 0.8f;
+  //cube2->transform.rotation.z = 0;
 
-  // line2->origin.position.x = 1;
-  cube3->transform.position.z = 3;
-  cube3->transform.position.y = -1;
-  cube3->transform.rotation.y = -fTheta * 1.1f;
-  cube3->transform.rotation.z = 0;
+  //// line2->origin.position.x = 1;
+  //cube3->transform.position.z = 3;
+  //cube3->transform.position.y = -1;
+  //cube3->transform.rotation.y = -fTheta * 1.1f;
+  //cube3->transform.rotation.z = 0;
 
   // cube3->isVisible = false;
 }
@@ -169,7 +165,7 @@ int main(int argc, char **argv) {
           continue;
         }
         if (e.button.button == SDL_BUTTON_RIGHT) {
-          cube3->isVisible = !cube3->isVisible;
+          //cube3->isVisible = !cube3->isVisible;
           continue;
         }
       }
@@ -186,8 +182,6 @@ int main(int argc, char **argv) {
     loop();
     RenderScene(scn, renderer);
   }
-
-  free(cube);
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

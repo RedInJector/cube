@@ -13,6 +13,16 @@ bool isMatrixZero(mat4x4f* o) {
     return true;
 }
 
+bool isMatrixZero(mat4x4f &m) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (m.m[i][j] != 0.0f)
+                return false;
+        }
+    }
+    return true;
+}
+
 void MultiplyMatrixVector(vec3f* i, vec3f* o, mat4x4f* m) {
     o->x = i->x * m->m[0][0] + i->y * m->m[1][0] + i->z * m->m[2][0] + m->m[3][0];
     o->y = i->x * m->m[0][1] + i->y * m->m[1][1] + i->z * m->m[2][1] + m->m[3][1];
@@ -24,6 +34,20 @@ void MultiplyMatrixVector(vec3f* i, vec3f* o, mat4x4f* m) {
         o->x /= w;
         o->y /= w;
         o->z /= w;
+    }
+}
+
+void MultiplyMatrixVector(vec3f &i, vec3f &o, mat4x4f &m) {
+    o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
+    o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
+    o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
+    float w =
+        i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
+
+    if (w != 0.0f) {
+        o.x /= w;
+        o.y /= w;
+        o.z /= w;
     }
 }
 
@@ -44,6 +68,17 @@ void MultiplyMatrixes(mat4x4f* m1, mat4x4f* m2, mat4x4f* o) {
         }
     }
 }
+void MultiplyMatrixes(mat4x4f& m1, mat4x4f& m2, mat4x4f& o) {
+    float num = 0;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            num = 0;
+            for (int k = 0; k < 4; k++)
+                num += m1.m[i][k] * m2.m[k][j];
+            o.m[i][j] = num;
+        }
+    }
+}
 
 void vecToMat(vec3f* transform, mat4x4f* o) {
     o->m[0][0] = 1;
@@ -54,6 +89,16 @@ void vecToMat(vec3f* transform, mat4x4f* o) {
     o->m[3][1] = transform->y;
     o->m[3][2] = transform->z;
 }
+void vecToMat(vec3f& transform, mat4x4f& o) {
+    o.m[0][0] = 1;
+    o.m[1][1] = 1;
+    o.m[2][2] = 1;
+    o.m[3][3] = 1;
+    o.m[3][0] = transform.x;
+    o.m[3][1] = transform.y;
+    o.m[3][2] = transform.z;
+}
+
 void rotateMatrixX(float fTheta, mat4x4f* o) {
     o->m[0][0] = 1;
     o->m[1][1] = cosf(fTheta);
@@ -77,6 +122,17 @@ void rotateMatrixZ(float fTheta, mat4x4f* o) {
     o->m[1][1] = cosf(fTheta);
     o->m[2][2] = 1;
     o->m[3][3] = 1;
+}
+
+void rotateMatrix(vec3f& rotation, mat4x4f& out) {
+    float cx = cosf(rotation.x), sx = sinf(rotation.x);
+    float cy = cosf(rotation.y), sy = sinf(rotation.y);
+    float cz = cosf(rotation.z), sz = sinf(rotation.z);
+
+    out.m[0][0] = cy * cz;  out.m[0][1] = cz * sx * sy - cx * sz;  out.m[0][2] = cx * cz * sy + sx * sz;  out.m[0][3] = 0.0f;
+    out.m[1][0] = cy * sz;  out.m[1][1] = cx * cz + sx * sy * sz;  out.m[1][2] = -cz * sx + cx * sy * sz; out.m[1][3] = 0.0f;
+    out.m[2][0] = -sy;      out.m[2][1] = cy * sx;                out.m[2][2] = cx * cy;                 out.m[2][3] = 0.0f;
+    out.m[3][0] = 0.0f;        out.m[3][1] = 0.0f;                      out.m[3][2] = 0.0f;
 }
 
 void printMatrix(mat4x4f* m) {

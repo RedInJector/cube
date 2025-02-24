@@ -1,6 +1,8 @@
 #ifndef SIMPLE_3dENGINE
 #define SIMPLE_3dENGINE
 #include <stdlib.h>
+#include <vector>
+#include <memory>
 #include "Math3d.h"
 
 struct Camera_s {
@@ -37,14 +39,30 @@ struct scene_s {
 typedef struct scene_s scene;
 
 
+typedef struct object3d_vs {
+	transformation transform;
+	vec3f origin;
+	bool isVisible;
+	std::vector<triangle> triangles;
+} object3d_v;
+
+typedef struct scene_vs {
+	std::vector<std::shared_ptr<object3d_vs>> objects;
+} scene_v;
+
+
 /**
  * @brief creates a projection matrix for a specific camera.
  *
  * @param *c - camera to create projection matrix from
  * @param *o - output projection matrix
- *
+ * 
  */
 void makeProjectionMatrix(Camera* c, mat4x4f* o);
+
+void makeProjectionMatrix(Camera& c, mat4x4f& o);
+
+std::shared_ptr<object3d_v> makeCubeNew();
 
 
 
@@ -62,6 +80,10 @@ object3d* makeLine();
  */
 scene* makeScene(int amount_ofObjects);
 
+std::shared_ptr<scene_v> makeSceneNew();
+
+
+void applyTransform(std::shared_ptr<object3d_v> obj, mat4x4f& out);
 
 /**
  * @brief creates a transformation matrix from objects parameters.
