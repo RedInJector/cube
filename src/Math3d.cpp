@@ -1,5 +1,6 @@
 #include "Math3d.h"
 #include <iostream>
+#include <vector>
 
 struct mat4x4f_s mat4x4f_default = { 0.0f };
 
@@ -55,6 +56,12 @@ void MultiplyMatrixTris(triangle* i, triangle* o, mat4x4f* m) {
     MultiplyMatrixVector(&i->p[0], &o->p[0], m);
     MultiplyMatrixVector(&i->p[1], &o->p[1], m);
     MultiplyMatrixVector(&i->p[2], &o->p[2], m);
+}
+
+void MultiplyMatrixTris(triangle_v &i, std::vector<vec3f> vertices, triangle &o, mat4x4f &m){
+    MultiplyMatrixVector(vertices.at(i.vertexid[0]), o.p[0], m);
+    MultiplyMatrixVector(vertices.at(i.vertexid[1]), o.p[1], m);
+    MultiplyMatrixVector(vertices.at(i.vertexid[2]), o.p[2], m);
 }
 
 void MultiplyMatrixes(mat4x4f* m1, mat4x4f* m2, mat4x4f* o) {

@@ -9,14 +9,33 @@
 #include <sstream>
 #include <string>
 
-std::unique_ptr<object3d_v> loadObj(const std::string &filename) {
+typedef struct Face {
+    std::vector<int> vertexIndices;
+} Face;
+
+typedef struct parsedobj {
+    std::vector<vec3f> vertices;
+    std::vector<triangle_v> triangles;
+} parsedobj;
+
+std::unique_ptr<object3d_v> parsedObjToObject3d(parsedobj &obj){
+    auto o = std::make_unique<object3d_v>();
+    o->vertices = obj.vertices;
+    o->triangles = obj.triangles;
+    o->isVisible = true;
+
+    return o;
+}
+
+
+std::unique_ptr<parsedobj> loadObj(const std::string &filename) {
     std::ifstream file(filename);
     if(!file.is_open()){
         std::cerr << "Failed to load object from" << filename << std::endl;
         return nullptr;
     }
 
-    std::unique_ptr<object3d_v> object = std::make_unique<object3d_v>();
+    std::unique_ptr<parsedobj> object = std::make_unique<parsedobj>();
 
     std::string line;
     while (std::getline(file, line)){
@@ -50,8 +69,6 @@ std::unique_ptr<object3d_v> loadObj(const std::string &filename) {
                     face.vertexIndices.push_back(std::stoi(vIndex) - 1);
 
             }
-
-            //object->faces.push_back(face);
 
             // Triangulate if more than 3 vertices
             std::vector<int> vIndices = face.vertexIndices;

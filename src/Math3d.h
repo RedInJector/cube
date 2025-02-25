@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <vector>
 
 
 struct vector3f_s {
@@ -87,7 +88,7 @@ void MultiplyMatrixVector(vec3f* i, vec3f* o, mat4x4f* m);
  * @param *m - pointer to a matrix
  */
 void MultiplyMatrixTris(triangle* i, triangle* o, mat4x4f* m);
-
+void MultiplyMatrixTris(triangle_v &i, std::vector<vec3f> vertices, triangle &o, mat4x4f &m);
 
 /**
  * @brief Multiplies two 4x4 matrixes

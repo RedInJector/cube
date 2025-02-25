@@ -39,9 +39,6 @@ struct scene_s {
 
 typedef struct scene_s scene;
 
-typedef struct Face_s {
-    std::vector<int> vertexIndices;
-} Face;
 
 
 typedef struct object3d_vs {
@@ -50,7 +47,8 @@ typedef struct object3d_vs {
 	bool isVisible;
 	std::vector<triangle_v> triangles;
     std::vector<vec3f> vertices;
-    std::vector<Face> faces;
+
+    std::vector<SDL_Vertex> projected;
 	//SDL_Vertex* sdlvertices;
 } object3d_v;
 
@@ -91,7 +89,7 @@ scene* makeScene(int amount_ofObjects);
 std::shared_ptr<scene_v> makeSceneNew();
 
 
-void applyTransform(std::shared_ptr<object3d_v> obj, mat4x4f& out);
+void getTransformationMatrix(std::shared_ptr<object3d_v> obj, mat4x4f& out);
 
 /**
  * @brief creates a transformation matrix from objects parameters.

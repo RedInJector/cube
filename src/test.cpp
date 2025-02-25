@@ -9,11 +9,11 @@ int main(int argc, char **argv){
     }
     std::string path(argv[1]);
     std::cout << path << "\n";
-    std::unique_ptr<object3d_v> obj = loadObj(path);
+    auto obj = loadObj(path);
 
     if (obj) {
         std::cout << "Loaded model with " << obj->vertices.size() << " vertices and " 
-                  << obj->faces.size() << " faces.\n";
+                  << obj->triangles.size() << " faces.\n";
     } else {
         std::cerr << "Error loading OBJ file.\n";
     }
