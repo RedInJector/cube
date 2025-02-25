@@ -51,7 +51,7 @@ std::unique_ptr<object3d_v> loadObj(const std::string &filename) {
 
             }
 
-            object->faces.push_back(face);
+            //object->faces.push_back(face);
 
             // Triangulate if more than 3 vertices
             std::vector<int> vIndices = face.vertexIndices;

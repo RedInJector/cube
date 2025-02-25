@@ -1,10 +1,10 @@
-#include "objparser.h"
+
 #define SDL_MAIN_HANDLED
 #define SDL_PROJECT
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-
+#include "objparser.h"
 #include <SDL.h>
 
 #include "Bresenham.h"
@@ -19,8 +19,10 @@ SDL_Renderer *renderer;
 
 void plotPixel(int x, int y) { SDL_RenderDrawPoint(renderer, x, y); }
 void plotLinePoints(vec3f point0, vec3f point1) {
-  std::function<void(int, int)> pixelPlotter = plotPixel;
-  plotLine(pixelPlotter, point0.x, point0.y, point1.x, point1.y);
+    SDL_RenderDrawLine(renderer, point0.x, point0.y, point1.x, point1.y);
+
+  //std::function<void(int, int)> pixelPlotter = plotPixel;
+  //plotLine(pixelPlotter, point0.x, point0.y, point1.x, point1.y);
 }
 
 void plotTriangle(triangle t) {
@@ -82,8 +84,11 @@ void RenderScene(std::shared_ptr<scene_v> sc, SDL_Renderer *r) {
       triProjected.p[2].x *= 0.5f * (float)SCREEN_W;
       triProjected.p[2].y *= 0.5f * (float)SCREEN_H;
 
-      // plotTriangle_SDL(&triProjected, r);
-      plotTriangle(triProjected);
+      plotTriangle_SDL(&triProjected, r);
+      //plotTriangle(triProjected);
+
+
+      //SDL_RenderGeometry(renderer, NULL, )
     }
   }
 
@@ -102,7 +107,7 @@ void start() {
   // scn->objects.push_back(makeCubeNew());
   // scn->objects.push_back(makeCubeNew());
 
-  auto obj = loadObj("teapot.obj");
+  auto obj = loadObj("manuka.obj");
   if(obj == nullptr)
       exit(1);
 
@@ -124,13 +129,13 @@ void loop() {
 
   auto object = scn->objects.at(0);
 
-  object->transform.rotation.x = 0;
+  object->transform.rotation.x = 360;
   object->transform.rotation.y = fTheta;
   object->transform.rotation.z = 0;
 
   object->transform.position.x = 0;
   object->transform.position.y = 0;
-  object->transform.position.z = 10;
+  object->transform.position.z = 3;
 
   // cube2->origin.position.x = 1;
   // cube2->transform.position.y = 1;
@@ -147,7 +152,7 @@ void loop() {
   // cube3->isVisible = false;
 }
 
-int main(int argc, char **argv) {
+int main() {
   window = SDL_CreateWindow("Test", 200, 200, SCREEN_WIDTH, SCREEN_HEIGHT,
                             SDL_WINDOW_OPENGL);
   if (window == NULL) {

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <memory>
+#include <SDL.h>
 #include "Math3d.h"
 
 struct Camera_s {
@@ -50,6 +51,7 @@ typedef struct object3d_vs {
 	std::vector<triangle_v> triangles;
     std::vector<vec3f> vertices;
     std::vector<Face> faces;
+	//SDL_Vertex* sdlvertices;
 } object3d_v;
 
 typedef struct scene_vs {
